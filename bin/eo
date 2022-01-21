@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+const path = require('path');
+const minimist = require('minimist');
+const argv = minimist(process.argv.slice(2));
+let configPath = argv.c || argv.config || '';
+if (configPath !== true && configPath !== '') {
+  configPath = path.resolve(configPath);
+}
+const { EO } = require('..');
+const eo = new EO(configPath);
+eo.loadAllCommands();
+try {
+  eo.command.parse(process.argv);
+} catch(e) {
+  eo.logger.error(e);
+  if (process.argv.includes('--debug')) {
+    Promise.reject(e);
+  }
+}
