@@ -61,7 +61,7 @@
     "comment-json": "^4.1.1",
     "cross-spawn": "^6.0.5",
     "dayjs": "^1.7.4",
-    "dexie": "^3.2.0",
+    "dexie": "^3.2.1-beta.2",
     "fs-extra": "^6.0.1",
     "inquirer": "^6.0.0",
     "lodash": "^4.17.21",

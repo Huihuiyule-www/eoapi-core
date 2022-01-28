@@ -10,8 +10,8 @@ import replace from '@rollup/plugin-replace';
 const version = process.env.VERSION || pkg.version;
 const sourcemap = 'inline';
 const banner = `/*
- * eo@${version}, https://github.com/eolinker/eo-coreEO_VERSION
- * Released under the MIT License.
+ * eoapi-core@${version}, https://github.com/eolinker/eoapi-core
+ * Released under the Apache License.
  */`;
 const input = './src/index.ts';
 
