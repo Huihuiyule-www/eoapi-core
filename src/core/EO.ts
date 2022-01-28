@@ -8,6 +8,7 @@ import Logger from '../lib/Logger';
 import Hook from '../lib/Hook';
 import Config from '../lib/Config';
 import Module from '../lib/Module';
+import Storage from '../lib/Storage';
 import { EventBus } from '../lib/EventBus';
 import { get, set, unset } from 'lodash';
 import { EOInterface, EOConfigInterface, ModuleInterface, HookInterface, KeyMapInterface, UndefinableType, SystemEventEnum } from '../types';
@@ -21,6 +22,7 @@ export class EO extends EventEmitter implements EOInterface {
   logger!: Logger;
   command!: Command;
   inquirer: Inquirer;
+  storage!: Storage;
   hook!: HookInterface;
   output: any[];
   input: any[];
@@ -37,6 +39,7 @@ export class EO extends EventEmitter implements EOInterface {
     this.initConfigPath();
     this.logger = new Logger(this);
     this.command = new Command();
+    this.storage = new Storage();
     this.inquirer = inquirer;
     this.hook = new Hook();
     this.init();
@@ -134,7 +137,13 @@ export class EO extends EventEmitter implements EOInterface {
     }
   }
 
+  async listTodoItems() {
+    return await this.storage.project.toArray();
+  }
+
   hookDemo(): EOInterface {
+    console.log('listTodoItems');
+    console.log(this.listTodoItems());
     const input = ['testa', 'testb'];
     const eo = this;
     try {

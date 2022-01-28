@@ -27,10 +27,10 @@ export class Module implements ModuleInterface {
   private init(): void {
     if (!fs.existsSync(this.packagePath)) {
       const data = {
-        name: 'eo-core',
-        description: 'eo-core',
-        repository: 'https://github.com/eolinker/eo-core',
-        license: 'MIT',
+        name: 'eoapi-core',
+        description: 'eoapi-core',
+        repository: 'https://github.com/eolinker/eoapi-core',
+        license: 'Apache-2.0 License',
         dependencies: {
           'eo-module-test': '1.0.0'
         }

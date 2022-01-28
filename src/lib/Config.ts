@@ -22,8 +22,8 @@ class Config {
     if (!this.db.has('modules').value()) {
       try {
         this.db.set('modules', {}).write();
-      } catch (e: any) {
-        this.eo.logger.error(e);
+      } catch (e) {
+        this.eo.logger.error(e as Error);
         throw e;
       }
     }

@@ -5,6 +5,7 @@ import { KeyMapInterface } from './common';
 import { HookInterface } from './hook';
 import { LoggerInterface } from './logger';
 import { ModuleInterface } from './module';
+import { Storage } from "../lib/Storage";
 
 export interface EOInterface extends EventEmitter {
   /**
@@ -21,6 +22,11 @@ export interface EOInterface extends EventEmitter {
    * Logger factory
    */
   logger: LoggerInterface;
+
+  /**
+   * Storage, database
+   */
+  storage: Storage;
 
   /**
    * Commander, for cli
