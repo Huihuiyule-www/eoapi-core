@@ -1,8 +1,7 @@
 import chalk from 'chalk';
-import dayjs from 'dayjs';
-import fs from 'fs-extra';
 import path from 'path';
 import util from 'util';
+import { appendFile, dateFormat } from '../utils'
 import { EOInterface, LoggerInterface, LogArgvType, LogTypeEnum, LogArgvWithErrorType, UndefinableType, LogColorType } from '../types';
 
 export class Logger implements LoggerInterface {
@@ -53,7 +52,7 @@ export class Logger implements LoggerInterface {
   private save(type: LogTypeEnum, ...messages: LogArgvWithErrorType[]): void {
     try {
       const fileName: string = this.eo.getConfig<UndefinableType<string>>('settings.log.fileName') || path.join(this.eo.baseDir, './eo.log');
-      let output = `${dayjs().format('YYYY-MM-DD HH:mm:ss')} [EO ${type.toUpperCase()}]`;
+      let output = `${dateFormat()} [EO ${type.toUpperCase()}]`;
       messages.forEach((message: LogArgvWithErrorType) => {
         if (typeof message === 'object') {
           if (LogTypeEnum.error === type) {
@@ -65,7 +64,7 @@ export class Logger implements LoggerInterface {
         output += `${message as string}`;
       });
       output += '\n';
-      fs.appendFileSync(fileName, output);
+      appendFile(fileName, output);
     } catch (e) {
       console.log(e);
     }

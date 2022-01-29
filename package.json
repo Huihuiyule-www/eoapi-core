@@ -16,7 +16,7 @@
     "dev": "rollup -c rollup.config.js -w"
   },
   "keywords": [
-    "eolink",
+    "eolinker",
     "api",
     "apikit"
   ],
@@ -29,14 +29,11 @@
     "@rollup/plugin-replace": "^3.0.0",
     "@types/cross-spawn": "^6.0.0",
     "@types/ejs": "^3.0.5",
-    "@types/fs-extra": "^5.0.4",
-    "@types/inquirer": "^0.0.42",
     "@types/lodash": "^4.14.175",
     "@types/lowdb": "^1.0.4",
     "@types/mime-types": "^2.1.0",
     "@types/minimatch": "^3.0.3",
     "@types/node": "^10.5.2",
-    "@types/resolve": "^0.0.8",
     "@types/rimraf": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "3",
     "@typescript-eslint/parser": "^3.2.0",
@@ -53,22 +50,18 @@
     "rollup-plugin-string": "^3.0.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
+    "rxjs": "^7.5.2",
     "typescript": "^4.4.3"
   },
   "dependencies": {
     "chalk": "^2.4.1",
     "commander": "^8.1.0",
-    "comment-json": "^4.1.1",
     "cross-spawn": "^6.0.5",
-    "dayjs": "^1.7.4",
     "dexie": "^3.2.1-beta.2",
-    "fs-extra": "^6.0.1",
-    "inquirer": "^6.0.0",
     "lodash": "^4.17.21",
     "lodash-id": "^0.14.0",
     "lowdb": "^1.0.0",
-    "minimist": "^1.2.5",
-    "resolve": "^1.8.1"
+    "minimist": "^1.2.5"
   },
   "repository": {
     "type": "git",

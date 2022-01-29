@@ -1,9 +1,7 @@
-import fs from 'fs-extra';
 import path from 'path';
 import { EventEmitter } from 'events';
 import { homedir } from 'os';
 import { Command } from 'commander';
-//import inquirer, { Inquirer } from 'inquirer';
 import Logger from '../lib/Logger';
 import Hook from '../lib/Hook';
 import Config from '../lib/Config';
@@ -11,6 +9,7 @@ import Module from '../lib/Module';
 import Storage from '../lib/Storage';
 import { EventBus } from '../lib/EventBus';
 import { get, set, unset } from 'lodash';
+import { ensureFile } from "../utils";
 import { EOInterface, EOConfigInterface, ModuleInterface, HookInterface, KeyMapInterface, UndefinableType, SystemEventEnum } from '../types';
 
 export class EO extends EventEmitter implements EOInterface {
@@ -21,7 +20,6 @@ export class EO extends EventEmitter implements EOInterface {
   baseDir!: string;
   logger!: Logger;
   command!: Command;
-  //inquirer: Inquirer;
   storage!: Storage;
   hook!: HookInterface;
   output: any[];
@@ -39,7 +37,6 @@ export class EO extends EventEmitter implements EOInterface {
     this.initConfigPath();
     this.logger = new Logger(this);
     this.command = new Command();
-    //this.inquirer = inquirer;
     this.storage = new Storage();
     this.hook = new Hook();
     this.init();
@@ -54,10 +51,7 @@ export class EO extends EventEmitter implements EOInterface {
       throw Error('The configuration file only supports JSON format.')
     }
     this.baseDir = path.dirname(this.configPath);
-    const exist = fs.pathExistsSync(this.configPath);
-    if (!exist) {
-      fs.ensureFileSync(`${this.configPath}`);
-    }
+    ensureFile(this.configPath);
   }
 
   private init(): void {

@@ -1,7 +1,6 @@
-import fs from 'fs-extra';
 import path from 'path';
 import spawn from 'cross-spawn'
-import resolve from 'resolve';
+import { readJson, writeJson, fileExists } from "../utils";
 import { EOInterface, ModuleInterface, ModuleType, EOModuleInterface, ModuleEnvInterface, ModuleOptionsInterface, ModuleResultInterface, ModuleProcessResultInterface, ResultInterface, UndefinableType, EOEventEnum } from '../types';
 import systemModule from '../modules/system';
 import databaseModule from '../modules/database';
@@ -25,7 +24,7 @@ export class Module implements ModuleInterface {
   }
 
   private init(): void {
-    if (!fs.existsSync(this.packagePath)) {
+    if (!fileExists(this.packagePath)) {
       const data = {
         name: 'eoapi-core',
         description: 'eoapi-core',
@@ -35,20 +34,9 @@ export class Module implements ModuleInterface {
           'eo-module-test': '1.0.0'
         }
       };
-      fs.writeJsonSync(this.packagePath, data);
+      writeJson(this.packagePath, data);
     }
     this.loadModules();
-  }
-
-  /**
-   * Get module entry.
-   */
-  private resolve(eo: EOInterface, name: string): string {
-    try {
-      return resolve.sync(name, { basedir: eo.baseDir });
-    } catch (err) {
-      return path.join(this.modulePath, name);
-    }
   }
 
   /**
@@ -76,22 +64,24 @@ export class Module implements ModuleInterface {
    * Load community modules.
    */
   private loadCommunityModules(): boolean {
-    if (!fs.existsSync(this.packagePath) || !fs.existsSync(this.modulePath)) {
+    if (!fileExists(this.packagePath) || !fileExists(this.modulePath)) {
       return false;
     }
     console.log('loadCommunityModules: ' + this.packagePath);
-    const json = fs.readJsonSync(this.packagePath, { throws: false });
+    const json = readJson(this.packagePath);
     if (!json) {
       return false;
     }
     console.log(json);
+    // @ts-ignore
     const deps = Object.keys(json.dependencies || {});
+    // @ts-ignore
     const devDeps = Object.keys(json.devDependencies || {});
     const modules = deps.concat(devDeps).filter((name: string) => {
       if (!/^eo-module-|^@[^/]+\/eo-module-/.test(name)) {
         return false;
       }
-      return fs.existsSync(this.resolve(this.eo, name));
+      return fileExists(path.join(this.modulePath, name));
     });
     for (const name of modules) {
       const module = require(path.join(this.modulePath, name))();
@@ -245,7 +235,7 @@ export class Module implements ModuleInterface {
       output = 'scope';
     } else if (name.startsWith('eo-module-')) {
       output = 'normal';
-    } else if (!path.isAbsolute(name) || !fs.existsSync(path.join(process.cwd(), name)) || !(name.includes('/') || name.includes('\\'))) {
+    } else if (!path.isAbsolute(name) || !fileExists(path.join(process.cwd(), name)) || !(name.includes('/') || name.includes('\\'))) {
       output = 'simple';
     }
     return output;
@@ -302,12 +292,12 @@ export class Module implements ModuleInterface {
         output = this.getCompleteModuleName(name);
       default: {
         // Absolute path
-        if (path.isAbsolute(name) && fs.existsSync(name)) {
+        if (path.isAbsolute(name) && fileExists(name)) {
           output = name;
         } else {
           // Relative path
           name = path.join(process.cwd(), name);
-          if (fs.existsSync(name)) {
+          if (fileExists(name)) {
             output = name;
           }
         }
@@ -343,18 +333,20 @@ export class Module implements ModuleInterface {
       case 'simple':
         output = this.removeModuleVersion(this.getCompleteModuleName(name));
       default: {
-        if (!fs.existsSync(name)) {
+        if (!fileExists(name)) {
           this.eo.logger.warn(`Can't find module: ${name}`);
         }
         const packageJson = path.posix.join(name, 'package.json');
-        if (!fs.existsSync(packageJson)) {
+        if (!fileExists(packageJson)) {
           this.eo.logger.warn(`Can't find module: ${name}`);
         } else {
-          const pkg = fs.readJSONSync(packageJson) || {};
-          if (!pkg.name?.includes('eo-module-')) {
-            this.eo.logger.warn(`The module package.json's name filed is ${pkg.name as string || 'empty'}, need to include the prefix: eo-module-`);
+          const pkg = readJson(packageJson) || {};
+          // @ts-ignore
+          const pkgName: string = pkg.name || '';
+          if (!pkgName.includes('eo-module-')) {
+            this.eo.logger.warn(`The module package.json's name filed is ${pkgName}, need to include the prefix: eo-module-`);
           } else {
-            output = pkg.name;
+            output = pkgName;
           }
         }
       }

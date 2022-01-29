@@ -27,6 +27,7 @@ export class Storage extends Dexie implements StorageInterface {
     console.log('populate');
     await this.project.add({ uuid: 1, name: 'Default' });
     // demo data
+    // @ts-ignore
     await this.apiData.bulkAdd(demoApiDataItems);
   }
 
@@ -64,7 +65,7 @@ export class Storage extends Dexie implements StorageInterface {
       table.bulkAdd(items).then((result) => {
         obs.next({number: result});
         obs.complete();
-      }).catch((error) => {
+      }).catch((error: any) => {
         obs.error(error);
       });
     });
@@ -129,7 +130,7 @@ export class Storage extends Dexie implements StorageInterface {
           table.bulkPut(newItems).then((result) => {
             obs.next({number: result, items: newItems});
             obs.complete();
-          }).catch((error) => {
+          }).catch((error: any) => {
             obs.error(error);
           });
         } else {

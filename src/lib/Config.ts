@@ -1,7 +1,6 @@
 import lowdb from 'lowdb';
 import lodashId from 'lodash-id';
 import FileSync from 'lowdb/adapters/FileSync';
-import json from 'comment-json';
 import { EOConfigInterface, EOInterface } from '../types';
 
 class Config {
@@ -12,9 +11,9 @@ class Config {
     this.eo = eo;
     const adapter = new FileSync(this.eo.configPath, {
       serialize (obj: object): string {
-        return json.stringify(obj, null, 2);
+        return JSON.stringify(obj, null, 2);
       },
-      deserialize: json.parse
+      deserialize: JSON.parse
     });
     this.db = lowdb(adapter);
     this.db._.mixin(lodashId);
