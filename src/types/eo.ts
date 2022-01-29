@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Command } from 'commander';
-import { Inquirer } from 'inquirer';
+//import { Inquirer } from 'inquirer';
 import { KeyMapInterface } from './common';
 import { HookInterface } from './hook';
 import { LoggerInterface } from './logger';
@@ -36,7 +36,7 @@ export interface EOInterface extends EventEmitter {
   /**
    * Inquirer
    */
-  inquirer: Inquirer;
+  //inquirer: Inquirer;
 
   /**
    * Hook

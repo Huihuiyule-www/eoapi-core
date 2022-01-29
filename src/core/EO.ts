@@ -3,7 +3,7 @@ import path from 'path';
 import { EventEmitter } from 'events';
 import { homedir } from 'os';
 import { Command } from 'commander';
-import inquirer, { Inquirer } from 'inquirer';
+//import inquirer, { Inquirer } from 'inquirer';
 import Logger from '../lib/Logger';
 import Hook from '../lib/Hook';
 import Config from '../lib/Config';
@@ -21,7 +21,7 @@ export class EO extends EventEmitter implements EOInterface {
   baseDir!: string;
   logger!: Logger;
   command!: Command;
-  inquirer: Inquirer;
+  //inquirer: Inquirer;
   storage!: Storage;
   hook!: HookInterface;
   output: any[];
@@ -39,8 +39,8 @@ export class EO extends EventEmitter implements EOInterface {
     this.initConfigPath();
     this.logger = new Logger(this);
     this.command = new Command();
+    //this.inquirer = inquirer;
     this.storage = new Storage();
-    this.inquirer = inquirer;
     this.hook = new Hook();
     this.init();
   }
@@ -137,13 +137,7 @@ export class EO extends EventEmitter implements EOInterface {
     }
   }
 
-  async listTodoItems() {
-    return await this.storage.project.toArray();
-  }
-
   hookDemo(): EOInterface {
-    console.log('listTodoItems');
-    console.log(this.listTodoItems());
     const input = ['testa', 'testb'];
     const eo = this;
     try {

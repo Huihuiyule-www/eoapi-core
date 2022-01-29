@@ -35,7 +35,7 @@ export class Module implements ModuleInterface {
           'eo-module-test': '1.0.0'
         }
       };
-      fs.writeFileSync(this.packagePath, JSON.stringify(data), 'utf8');
+      fs.writeJsonSync(this.packagePath, data);
     }
     this.loadModules();
   }
@@ -76,10 +76,15 @@ export class Module implements ModuleInterface {
    * Load community modules.
    */
   private loadCommunityModules(): boolean {
-    if (!fs.existsSync(this.modulePath)) {
+    if (!fs.existsSync(this.packagePath) || !fs.existsSync(this.modulePath)) {
       return false;
     }
-    const json = fs.readJSONSync(this.packagePath);
+    console.log('loadCommunityModules: ' + this.packagePath);
+    const json = fs.readJsonSync(this.packagePath, { throws: false });
+    if (!json) {
+      return false;
+    }
+    console.log(json);
     const deps = Object.keys(json.dependencies || {});
     const devDeps = Object.keys(json.devDependencies || {});
     const modules = deps.concat(devDeps).filter((name: string) => {

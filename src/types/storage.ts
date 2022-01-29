@@ -1,7 +1,9 @@
+import { Observable } from 'rxjs';
+
 /**
  * 数据对象基础模型
  */
-export interface StorageModel {
+interface StorageModel {
   /**
    * 主键UUID，字符串UUID或数值型
    * @type {string|number}
@@ -31,38 +33,6 @@ export interface StorageModel {
    * @type {Date}
    */
   updatedAt?: Date;
-}
-
-/**
- * API数据对象接口
- */
-export interface ApiData extends StorageModel {
-  /**
-   * 名称
-   * @type {string}
-   */
-  name: string;
-
-  /**
-   * 文档所属项目主键ID
-   *
-   * @type {string|number}
-   */
-  projectID?: string | number;
-
-  /**
-   * 文档所属分组主键ID
-   *
-   * @type {string|number}
-   */
-  groupID: string | number;
-
-  /**
-   * 请求地址
-   *
-   * @type {string}
-   */
-  uri: string;
 }
 
 /**
@@ -203,6 +173,7 @@ export interface ApiTestHistoryFrame {
     reportList: string[] | object[];
   };
 }
+
 /**
  * API测试历史对象接口
  */
@@ -485,3 +456,63 @@ export interface ApiEditBody extends BasiApiEditParams {
    */
   children?: ApiEditBody[];
 }
+
+/**
+ * Storage CURD Interface.
+ */
+export interface StorageInterface {
+  // Project
+  projectCreate: (item: Project) => Observable<object>;
+  projectUpdate: (item: Project, uuid: number|string) => Observable<object>;
+  projectBulkCreate: (items: Array<Project>) => Observable<object>;
+  projectBulkUpdate: (items: Array<Project>) => Observable<object>;
+  projectRemove: (uuid: number|string) => Observable<boolean>;
+  projectBulkRemove: (uuids: Array<number|string>) => Observable<boolean>;
+  projectLoad: (uuid: number|string) => Observable<object>;
+  projectBulkLoad: (uuids: Array<number|string>) => Observable<Array<object>>;
+  // Environment
+  environmentCreate: (item: Environment) => Observable<object>;
+  environmentUpdate: (item: Environment, uuid: number|string) => Observable<object>;
+  environmentBulkCreate: (items: Array<Environment>) => Observable<object>;
+  environmentBulkUpdate: (items: Array<Environment>) => Observable<object>;
+  environmentRemove: (uuid: number|string) => Observable<boolean>;
+  environmentBulkRemove: (uuids: Array<number|string>) => Observable<boolean>;
+  environmentLoad: (uuid: number|string) => Observable<object>;
+  environmentBulkLoad: (uuids: Array<number|string>) => Observable<Array<object>>;
+  environmentLoadAllByProjectID: (projectID: number|string) => Observable<Array<object>>;
+  // Group
+  groupCreate: (item: Group) => Observable<object>;
+  groupUpdate: (item: Group, uuid: number|string) => Observable<object>;
+  groupBulkCreate: (items: Array<Group>) => Observable<object>;
+  groupBulkUpdate: (items: Array<Group>) => Observable<object>;
+  groupRemove: (uuid: number|string) => Observable<boolean>;
+  groupBulkRemove: (uuids: Array<number|string>) => Observable<boolean>;
+  groupLoad: (uuid: number|string) => Observable<object>;
+  groupBulkLoad: (uuids: Array<number|string>) => Observable<Array<object>>;
+  groupLoadAllByProjectID: (projectID: number|string) => Observable<Array<object>>;
+  // Api Data
+  apiDataCreate: (item: ApiData) => Observable<object>;
+  apiDataUpdate: (item: ApiData, uuid: number|string) => Observable<object>;
+  apiDataBulkCreate: (items: Array<ApiData>) => Observable<object>;
+  apiDataBulkUpdate: (items: Array<ApiData>) => Observable<object>;
+  apiDataRemove: (uuid: number|string) => Observable<boolean>;
+  apiDataBulkRemove: (uuids: Array<number|string>) => Observable<boolean>;
+  apiDataLoad: (uuid: number|string) => Observable<object>;
+  apiDataBulkLoad: (uuids: Array<number|string>) => Observable<Array<object>>;
+  apiDataLoadAllByProjectID: (projectID: number|string) => Observable<Array<object>>;
+  apiDataLoadAllByGroupID: (groupID: number|string) => Observable<Array<object>>;
+  apiDataLoadAllByProjectIDAndGroupID: (projectID: number|string, groupID: number|string) => Observable<Array<object>>;
+  // Api Test History
+  apiTestHistoryCreate: (item: ApiTestHistory) => Observable<object>;
+  apiTestHistoryUpdate: (item: ApiTestHistory, uuid: number|string) => Observable<object>;
+  apiTestHistoryBulkCreate: (items: Array<ApiTestHistory>) => Observable<object>;
+  apiTestHistoryBulkUpdate: (items: Array<ApiTestHistory>) => Observable<object>;
+  apiTestHistoryRemove: (uuid: number|string) => Observable<boolean>;
+  apiTestHistoryBulkRemove: (uuids: Array<number|string>) => Observable<boolean>;
+  apiTestHistoryLoad: (uuid: number|string) => Observable<object>;
+  apiTestHistoryBulkLoad: (uuids: Array<number|string>) => Observable<Array<object>>;
+  apiTestHistoryLoadAllByProjectID: (projectID: number|string) => Observable<Array<object>>;
+  apiTestHistoryLoadAllByApiDataID: (apiDataID: number|string) => Observable<Array<object>>;
+}
+
+export type StorageItem = Project | Environment | Group | ApiData | ApiTestHistory;
