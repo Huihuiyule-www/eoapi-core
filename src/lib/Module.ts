@@ -1,5 +1,6 @@
 import path from 'path';
-import spawn from 'cross-spawn'
+import spawn from 'cross-spawn';
+import resolve from 'resolve';
 import { readJson, writeJson, fileExists } from "../utils";
 import { EOInterface, ModuleInterface, ModuleType, EOModuleInterface, ModuleEnvInterface, ModuleOptionsInterface, ModuleResultInterface, ModuleProcessResultInterface, ResultInterface, UndefinableType, EOEventEnum } from '../types';
 import systemModule from '../modules/system';
@@ -19,7 +20,7 @@ export class Module implements ModuleInterface {
     this.enabledModules = new Map();
     this.disabledModules = new Map();
     this.packagePath = path.join(eo.baseDir, 'package.json');
-    this.modulePath = path.join(eo.baseDir, 'node_modules');
+    this.modulePath = path.join(eo.baseDir, 'node_modules/');
     this.init();
   }
 
@@ -37,6 +38,18 @@ export class Module implements ModuleInterface {
       writeJson(this.packagePath, data);
     }
     this.loadModules();
+  }
+
+  /**
+   * Get module entry main file.
+   * @param name
+   */
+  private resolveModule(name: string): string {
+    try {
+      return resolve.sync(name, { basedir: this.eo.baseDir });
+    } catch (err) {
+      return path.join(this.eo.baseDir, 'node_modules', name);
+    }
   }
 
   /**
@@ -81,11 +94,10 @@ export class Module implements ModuleInterface {
       if (!/^eo-module-|^@[^/]+\/eo-module-/.test(name)) {
         return false;
       }
-      return fileExists(path.join(this.modulePath, name));
+      return fileExists(this.resolveModule(name));
     });
     for (const name of modules) {
-      const module = require(path.join(this.modulePath, name))();
-      this.enableModule(module);
+      this.register(name);
     }
     return true;
   }
@@ -144,7 +156,7 @@ export class Module implements ModuleInterface {
    */
   private register(moduleID: string): void {
     try {
-      const module = require(path.join(this.modulePath, moduleID))();
+      const module = require(this.resolveModule(moduleID))();
       this.enableModule(module);
     } catch (e) {
       this.eo.logger.error(e as Error);

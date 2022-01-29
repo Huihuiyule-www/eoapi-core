@@ -24,7 +24,9 @@ export const fileExists = (file: string): boolean => {
 
 export const ensureFile = (file: string) => {
   try {
-    fs.closeSync(fs.openSync(file, 'w'));
+    if (!fileExists(file)) {
+      fs.closeSync(fs.openSync(file, 'w'));
+    }
   } catch (e) {
     throw e;
   }
