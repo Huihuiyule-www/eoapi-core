@@ -1,7 +1,7 @@
 import path from 'path';
 import spawn from 'cross-spawn';
 import resolve from 'resolve';
-import { readJson, writeJson, fileExists } from "../utils";
+import { readJson, writeJson, fileExists, readFile } from "../utils";
 import { EOInterface, ModuleInterface, ModuleType, EOModuleInterface, ModuleEnvInterface, ModuleOptionsInterface, ModuleResultInterface, ModuleProcessResultInterface, ResultInterface, UndefinableType, EOEventEnum } from '../types';
 import systemModule from '../modules/system';
 import databaseModule from '../modules/database';
@@ -46,9 +46,13 @@ export class Module implements ModuleInterface {
    */
   private resolveModule(name: string): string {
     try {
-      return resolve.sync(name, { basedir: this.eo.baseDir });
+      return require.resolve(name, { paths: [this.eo.baseDir] });
     } catch (err) {
-      return path.join(this.eo.baseDir, 'node_modules', name);
+      try {
+        return resolve.sync(name, { basedir: this.eo.baseDir });
+      } catch (err) {
+        return path.join(this.eo.baseDir, 'node_modules', name);
+      }
     }
   }
 
@@ -85,7 +89,6 @@ export class Module implements ModuleInterface {
     if (!json) {
       return false;
     }
-    console.log(json);
     // @ts-ignore
     const deps = Object.keys(json.dependencies || {});
     // @ts-ignore
@@ -97,7 +100,8 @@ export class Module implements ModuleInterface {
       return fileExists(this.resolveModule(name));
     });
     for (const name of modules) {
-      this.register(name);
+      this.registerDynamic(name);
+      // this.register(name);
     }
     return true;
   }
@@ -107,6 +111,7 @@ export class Module implements ModuleInterface {
    * @param module
    */
   private enableModule(module: EOModuleInterface): void {
+    console.log('Enable module: ' + module.id);
     this.modules.set(module.id, module);
     try {
       const configKey = `modules.${module.id}`;
@@ -152,14 +157,46 @@ export class Module implements ModuleInterface {
 
   /**
    * Register module.
-   * @param moduleID
+   * It's only working in CLI with dynamic module path.
+   * @param name
    */
-  private register(moduleID: string): void {
+  private register(name: string): void {
     try {
-      const module = require(this.resolveModule(moduleID))();
+      const module = require(path.join(this.modulePath, name))();
       this.enableModule(module);
     } catch (e) {
       this.eo.logger.error(e as Error);
+    }
+  }
+
+  /**
+   * Register module which path is dynamic.
+   * @param name
+   */
+  private registerDynamic(name: string): void {
+    const path = this.resolveModule(name);
+    let script: string = readFile(path);
+    if (script) {
+      try {
+        const NodeModule = require('module');
+        const nodeModule = new NodeModule(path);
+        nodeModule.filename = path;
+        nodeModule.paths = NodeModule._nodeModulePaths(path);
+        if (!NodeModule._contextLoad) {
+          script = 'global.__filename = ' + JSON.stringify(name) + ';\n' +
+            'global.exports = exports;\n' +
+            'global.module = module;\n' +
+            'global.__dirname = __dirname;\n' +
+            'global.require = require;\n' +
+            'return require("vm").runInThisContext(' +
+            JSON.stringify(script) + ', ' +
+            JSON.stringify(name) + ', true);\n';
+        }
+        const module = nodeModule._compile(script, name + '-wrapper')();
+        this.enableModule(module);
+      } catch (e) {
+        this.eo.logger.error(e as Error);
+      }
     }
   }
 

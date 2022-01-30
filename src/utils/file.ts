@@ -18,6 +18,14 @@ export const readJson = (file: string): (object | null) => {
   }
 }
 
+export const readFile = (file: string): string => {
+  try {
+    return fs.readFileSync(file).toString();
+  } catch (e) {
+    return '';
+  }
+}
+
 export const fileExists = (file: string): boolean => {
   return fs.existsSync(file);
 }
