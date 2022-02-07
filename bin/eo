@@ -1,20 +1,34 @@
 #!/usr/bin/env node
+const fs = require('fs')
+const path = require('path')
+const packageJson = require('../package.json')
+const commander = require('commander')
 
-const path = require('path');
-const minimist = require('minimist');
-const argv = minimist(process.argv.slice(2));
-let configPath = argv.c || argv.config || '';
-if (configPath !== true && configPath !== '') {
-  configPath = path.resolve(configPath);
-}
-const { EO } = require('..');
-const eo = new EO(configPath);
-eo.loadAllCommands();
-try {
-  eo.command.parse(process.argv);
-} catch(e) {
-  eo.logger.error(e);
-  if (process.argv.includes('--debug')) {
-    Promise.reject(e);
-  }
-}
+commander.version(packageJson.version)
+
+commander
+  .command('g <target>')
+  .description('Create a plugin template.')
+  .action(async (target) => {
+    const mainTemplate = fs.readFileSync(
+      path.join(__dirname, '../template/index.js'),
+      {
+        encoding: 'utf8'
+      }
+    )
+    const packageTemplate = fs.readFileSync(
+      path.join(__dirname, '../template/package.json'),
+      {
+        encoding: 'utf8'
+      }
+    )
+    const _path = path.join(process.cwd(), target)
+    fs.mkdirSync(`${_path}`)
+    fs.writeFileSync(`${_path}/index.js`, mainTemplate)
+    console.log(`${_path}/index.js is generated. `)
+    fs.writeFileSync(`${_path}/package.json`, packageTemplate)
+    console.log(`${_path}/package.json is generated. `)
+  })
+
+// * parse args in commander
+commander.parse(process.argv)
