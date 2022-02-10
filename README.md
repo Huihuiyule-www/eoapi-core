@@ -41,6 +41,16 @@ Commands:
   help [command]                            display help for command
 ```
 
+#### Generate a new plugin quickly
+
+In the terminal generate a new plugin template by running the following command:
+
+```bash
+eo g plugin-name
+```
+
+It will create a `index.js` and `package.json` in `plugin-name/`.
+
 #### Module install
 
 ```bash

@@ -23,11 +23,12 @@ commander
       }
     )
     const _path = path.join(process.cwd(), target)
-    fs.mkdirSync(`${_path}`)
-    fs.writeFileSync(`${_path}/index.js`, mainTemplate)
-    console.log(`${_path}/index.js is generated. `)
-    fs.writeFileSync(`${_path}/package.json`, packageTemplate)
-    console.log(`${_path}/package.json is generated. `)
+    fs.mkdir(`${_path}`, () => {
+      fs.writeFileSync(`${_path}/index.js`, mainTemplate)
+      console.log(`${_path}/index.js is generated. `)
+      fs.writeFileSync(`${_path}/package.json`, packageTemplate)
+      console.log(`${_path}/package.json is generated. `)
+    })
   })
 
 // * parse args in commander
