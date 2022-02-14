@@ -3,30 +3,37 @@ const fs = require('fs')
 const path = require('path')
 const packageJson = require('../package.json')
 const commander = require('commander')
+const prettier = require('prettier')
+const tmpl = require('../template/tmpl.js')
 
 commander.version(packageJson.version)
 
 commander
-  .command('g <target>')
+  .command('g <template>')
   .description('Create a plugin template.')
-  .action(async (target) => {
-    const mainTemplate = fs.readFileSync(
-      path.join(__dirname, '../template/index.js'),
-      {
-        encoding: 'utf8'
-      }
-    )
-    const packageTemplate = fs.readFileSync(
-      path.join(__dirname, '../template/package.json'),
-      {
-        encoding: 'utf8'
-      }
-    )
-    const _path = path.join(process.cwd(), target)
+  .action(async (template) => {
+    const mainTemplate = tmpl.genIndexJS(template)
+    const packageTemplate = tmpl.genPackageJSON(template)
+    const _path = path.join(process.cwd(), template)
+    // * 获取文件名
     fs.mkdir(`${_path}`, () => {
-      fs.writeFileSync(`${_path}/index.js`, mainTemplate)
+      fs.writeFileSync(
+        `${_path}/index.js`,
+        prettier.format(mainTemplate, {
+          semi: false,
+          singleQuote: true,
+          trailingComma: 'none',
+          parser: 'babel'
+        })
+      )
       console.log(`${_path}/index.js is generated. `)
-      fs.writeFileSync(`${_path}/package.json`, packageTemplate)
+      fs.writeFileSync(
+        `${_path}/package.json`,
+        prettier.format(packageTemplate, {
+          trailingComma: 'none',
+          parser: 'json'
+        })
+      )
       console.log(`${_path}/package.json is generated. `)
     })
   })
