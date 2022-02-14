@@ -6,7 +6,6 @@ import Logger from '../lib/Logger';
 import Hook from '../lib/Hook';
 import Config from '../lib/Config';
 import Module from '../lib/Module';
-import Storage from '../lib/Storage';
 import { EventBus } from '../lib/EventBus';
 import { get, set, unset } from 'lodash';
 import { ensureFile } from "../utils";
@@ -20,7 +19,6 @@ export class EO extends EventEmitter implements EOInterface {
   baseDir!: string;
   logger!: Logger;
   command!: Command;
-  storage!: Storage;
   hook!: HookInterface;
   output: any[];
   input: any[];
@@ -37,7 +35,6 @@ export class EO extends EventEmitter implements EOInterface {
     this.initConfigPath();
     this.logger = new Logger(this);
     this.command = new Command();
-    this.storage = new Storage();
     this.hook = new Hook();
     this.init();
   }
