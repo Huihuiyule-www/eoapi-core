@@ -1,7 +1,7 @@
 import path from 'path';
 import spawn from 'cross-spawn';
 import resolve from 'resolve';
-import { readJson, writeJson, fileExists, readFile } from "../utils";
+import { readJson, writeJson, fileExists } from "../utils";
 import { EOInterface, ModuleInterface, ModuleType, EOModuleInterface, ModuleEnvInterface, ModuleOptionsInterface, ModuleResultInterface, ModuleProcessResultInterface, ResultInterface, UndefinableType, EOEventEnum } from '../types';
 import systemModule from '../modules/system';
 import databaseModule from '../modules/database';
@@ -84,7 +84,7 @@ export class Module implements ModuleInterface {
     if (!fileExists(this.packagePath) || !fileExists(this.modulePath)) {
       return false;
     }
-    console.log('loadCommunityModules: ' + this.packagePath);
+    this.eo.logger.info('loadCommunityModules: ' + this.packagePath);
     const json = readJson(this.packagePath);
     if (!json) {
       return false;
@@ -100,8 +100,8 @@ export class Module implements ModuleInterface {
       return fileExists(this.resolveModule(name));
     });
     for (const name of modules) {
-      this.registerDynamic(name);
-      // this.register(name);
+      // this.registerDynamic(name);
+      this.register(name);
     }
     return true;
   }
@@ -111,7 +111,7 @@ export class Module implements ModuleInterface {
    * @param module
    */
   private enableModule(module: EOModuleInterface): void {
-    console.log('Enable module: ' + module.id);
+    this.eo.logger.info('Enable module: ' + module.id);
     this.modules.set(module.id, module);
     try {
       const configKey = `modules.${module.id}`;
@@ -173,6 +173,7 @@ export class Module implements ModuleInterface {
    * Register module which path is dynamic.
    * @param name
    */
+  /*
   private registerDynamic(name: string): void {
     const path = this.resolveModule(name);
     let script: string = readFile(path);
@@ -199,6 +200,7 @@ export class Module implements ModuleInterface {
       }
     }
   }
+  */
 
   /**
    * Unregister module.

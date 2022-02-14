@@ -1,7 +1,7 @@
 import Dexie, { Table } from 'dexie';
 import { Observable } from 'rxjs';
 import { Project, Environment, Group, ApiData, ApiTestHistory, StorageInterface, StorageItem } from '../types';
-import { demoApiDataItems } from "../demoData";
+import { demoApiDataItems } from '../demoData';
 
 export class Storage extends Dexie implements StorageInterface {
   project!: Table<Project, number|string>;
