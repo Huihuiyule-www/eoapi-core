@@ -41,7 +41,7 @@ export class EO extends EventEmitter implements EOInterface {
 
   private initConfigPath(): void {
     if ('' === this.configPath) {
-      this.configPath = homedir() + '/.eo/config.json';
+      this.configPath = path.join(homedir(), '.eo', 'config.json');
     }
     if (path.extname(this.configPath).toUpperCase() !== '.JSON') {
       this.configPath = '';

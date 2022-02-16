@@ -105,6 +105,20 @@ export interface Project extends StorageModel {
   name: string;
 }
 
+export interface ApiTestHistoryResponse {
+  headers: object[];
+  statusCode: number;
+  body: string;
+  contentType: string;
+  responseType: 'text' | 'longText' | 'stream';
+  responseLength: number;
+  testDeny: string;
+  /**
+   * Inject Code println
+   */
+  reportList: string[] | object[];
+}
+
 export interface ApiTestHistoryFrame {
   /**
    * General indicators
