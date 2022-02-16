@@ -8,7 +8,7 @@ import Config from '../lib/Config';
 import Module from '../lib/Module';
 import { EventBus } from '../lib/EventBus';
 import { get, set, unset } from 'lodash';
-import { ensureFile } from "../utils";
+import { ensureDir, ensureFile } from "../utils";
 import { EOInterface, EOConfigInterface, ModuleInterface, HookInterface, KeyMapInterface, UndefinableType, SystemEventEnum } from '../types';
 
 export class EO extends EventEmitter implements EOInterface {
@@ -48,6 +48,7 @@ export class EO extends EventEmitter implements EOInterface {
       throw Error('The configuration file only supports JSON format.')
     }
     this.baseDir = path.dirname(this.configPath);
+    ensureDir(this.baseDir);
     ensureFile(this.configPath);
   }
 

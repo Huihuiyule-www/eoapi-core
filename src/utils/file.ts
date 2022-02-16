@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 export const writeJson = (file: string, data: object): boolean => {
   try {
@@ -28,6 +29,17 @@ export const readFile = (file: string): string => {
 
 export const fileExists = (file: string): boolean => {
   return fs.existsSync(file);
+}
+
+export const ensureDir = (name: string) => {
+  if (fs.existsSync(name)) {
+    return true;
+  } else {
+    if (ensureDir(path.dirname(name))) {
+      fs.mkdirSync(name);
+      return true;
+    }
+  }
 }
 
 export const ensureFile = (file: string) => {
