@@ -1,42 +1,20 @@
 #!/usr/bin/env node
-const fs = require('fs')
-const path = require('path')
-const packageJson = require('../package.json')
-const commander = require('commander')
-const prettier = require('prettier')
-const tmpl = require('../template/tmpl.js')
 
-commander.version(packageJson.version)
-
-commander
-  .command('g <template>')
-  .description('Create a plugin template.')
-  .action(async (template) => {
-    const mainTemplate = tmpl.genIndexJS(template)
-    const packageTemplate = tmpl.genPackageJSON(template)
-    const _path = path.join(process.cwd(), template)
-    // * 获取文件名
-    fs.mkdir(`${_path}`, () => {
-      fs.writeFileSync(
-        `${_path}/index.js`,
-        prettier.format(mainTemplate, {
-          semi: false,
-          singleQuote: true,
-          trailingComma: 'none',
-          parser: 'babel'
-        })
-      )
-      console.log(`${_path}/index.js is generated. `)
-      fs.writeFileSync(
-        `${_path}/package.json`,
-        prettier.format(packageTemplate, {
-          trailingComma: 'none',
-          parser: 'json'
-        })
-      )
-      console.log(`${_path}/package.json is generated. `)
-    })
-  })
-
-// * parse args in commander
-commander.parse(process.argv)
+const path = require('path');
+const minimist = require('minimist');
+const argv = minimist(process.argv.slice(2));
+let configPath = argv.c || argv.config || '';
+if (configPath !== true && configPath !== '') {
+  configPath = path.resolve(configPath);
+}
+const { EO } = require('..');
+const eo = new EO(configPath);
+eo.loadAllCommands();
+try {
+  eo.command.parse(process.argv);
+} catch(e) {
+  eo.logger.error(e);
+  if (process.argv.includes('--debug')) {
+    Promise.reject(e);
+  }
+}

@@ -1,10 +1,11 @@
 import path from 'path';
 import spawn from 'cross-spawn';
 import resolve from 'resolve';
-import { readJson, writeJson, fileExists } from "../utils";
+import { readJson, writeJson, fileExists } from '../utils';
 import { EOInterface, ModuleInterface, ModuleType, EOModuleInterface, ModuleEnvInterface, ModuleOptionsInterface, ModuleResultInterface, ModuleProcessResultInterface, ResultInterface, UndefinableType, EOEventEnum } from '../types';
 import systemModule from '../modules/system';
 import databaseModule from '../modules/database';
+import generateModule from '../modules/generate';
 
 export class Module implements ModuleInterface {
   private readonly eo: EOInterface;
@@ -71,6 +72,7 @@ export class Module implements ModuleInterface {
     const modules: EOModuleInterface[] = [];
     modules.push(systemModule());
     modules.push(databaseModule());
+    modules.push(generateModule());
     modules.forEach((module: EOModuleInterface) => {
       this.enableModule(module);
     });
