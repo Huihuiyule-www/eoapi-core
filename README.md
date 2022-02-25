@@ -1,21 +1,21 @@
-# EO-Core
+# EOAPI-Core
 
 A tool for api testing. Both CLI & api supports. It also supports module system.
 
 ## Installation
 
-EO-Core should be installed with node.js >= 12.
+EOAPI-Core should be installed with node.js >= 12.
 
 ### Global install
 
 ```bash
-npm install eo-core -g
+npm install eoapi-core -g
 ```
 
 ### Local install
 
 ```bash
-npm install eo-core -D
+npm install eoapi-core -D
 ```
 
 ## Usage
