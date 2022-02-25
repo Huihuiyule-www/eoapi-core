@@ -4,3 +4,7 @@ package-lock.json
 tsconfig.json
 .vscode/
 .travis.yml
+.github/
+.eslintignore
+.eslintrc.js
+rollup.config.js
