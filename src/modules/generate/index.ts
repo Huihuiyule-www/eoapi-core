@@ -23,14 +23,20 @@ const module = (): EOModuleInterface => {
           if (!/^eo-module-/.test(name)) {
             name = 'eo-module-' + name;
           }
-          const mainTemplate = tmpl.genIndexJS(name);
-          const packageTemplate = tmpl.genPackageJSON(name);
           const _path = path.join(process.cwd(), name);
           ensureDir(_path);
-          fs.writeFileSync(`${_path}/index.js`, mainTemplate);
-          eo.logger.info(`${_path}/index.js is generated.`);
-          fs.writeFileSync(`${_path}/package.json`, packageTemplate);
-          eo.logger.info(`${_path}/package.json is generated.`);
+          fs.writeFileSync(`${_path}/package.json`, tmpl.genPackageJSON(name));
+          fs.writeFileSync(`${_path}/tsconfig.json`, tmpl.genTsconfig());
+          fs.writeFileSync(`${_path}/.gitignore`, tmpl.genGitignore());
+          fs.writeFileSync(`${_path}/.npmignore`, tmpl.genNpmignore());
+          fs.writeFileSync(`${_path}/README.md`, tmpl.genReadme(name));
+          const _src = path.join(_path, 'src');
+          ensureDir(_src);
+          fs.writeFileSync(`${_src}/index.ts`, tmpl.genIndex(name));
+          const _github = path.join(_path, '.github', 'workflows');
+          ensureDir(_github);
+          fs.writeFileSync(`${_github}/npm-publish.yml`, tmpl.genNpmpublish());
+          eo.logger.info(`Template files of module ${name} is generated.`);
         });
       return eo;
     },
